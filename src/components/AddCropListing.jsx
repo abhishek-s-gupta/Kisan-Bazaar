@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { db } from '../db/database';
 import { PlusCircle, Upload, CheckCircle2, AlertCircle, ArrowLeft } from 'lucide-react';
+import { getCropImageFallback, resolveCropImageUrl } from '../utils/cropImages';
 
 export function AddCropListing({ currentRole, onCreated, onCancel }) {
   const [formData, setFormData] = useState({
@@ -12,25 +13,36 @@ export function AddCropListing({ currentRole, onCreated, onCancel }) {
     pricePerUnit: '',
     location: 'Nashik, Maharashtra',
     description: '',
-    photoUrl: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&auto=format&fit=crop&q=80'
+    photoUrl: '/crops/tomatoes.jpg'
   });
 
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState(false);
 
   const sampleImages = [
-    { label: 'Red Tomatoes', url: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&auto=format&fit=crop&q=80' },
-    { label: 'Fresh Onions', url: 'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=500&auto=format&fit=crop&q=80' },
-    { label: 'Clean Potatoes', url: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=500&auto=format&fit=crop&q=80' },
-    { label: 'Green Chillies', url: 'https://images.unsplash.com/photo-1588252303782-cb80119abd6d?w=500&auto=format&fit=crop&q=80' },
-    { label: 'Shimla Apples', url: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=500&auto=format&fit=crop&q=80' },
-    { label: 'Alphonso Mangoes', url: 'https://images.unsplash.com/photo-1553279768-865429fa0078?w=500&auto=format&fit=crop&q=80' },
-    { label: 'Yellow Bananas', url: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=500&auto=format&fit=crop&q=80' },
-    { label: 'Fresh Carrots', url: 'https://images.unsplash.com/photo-1598170845058-12ef4a45753b?w=500&auto=format&fit=crop&q=80' },
-    { label: 'Cauliflower', url: 'https://images.unsplash.com/photo-1568584711075-3d021a7c3ca3?w=500&auto=format&fit=crop&q=80' },
-    { label: 'Nagpur Oranges', url: 'https://images.unsplash.com/photo-1547514701-42782101795e?w=500&auto=format&fit=crop&q=80' },
-    { label: 'Pomegranate', url: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=500&auto=format&fit=crop&q=80' },
-    { label: 'Golden Wheat', url: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=500&auto=format&fit=crop&q=80' }
+    { label: 'Red Tomatoes', url: '/crops/tomatoes.jpg' },
+    { label: 'Fresh Onions', url: '/crops/onions.jpg' },
+    { label: 'Clean Potatoes', url: '/crops/potatoes.jpg' },
+    { label: 'Green Chillies', url: '/crops/chillies.jpg' },
+    { label: 'Fresh Carrots', url: '/crops/carrots.jpg' },
+    { label: 'Cauliflower', url: '/crops/cauliflower.jpg' },
+    { label: 'Green Capsicum', url: '/crops/capsicum.jpg' },
+    { label: 'Fresh Spinach', url: '/crops/spinach.jpg' },
+    { label: 'Highland Broccoli', url: '/crops/broccoli.jpg' },
+    { label: 'Sweet Green Peas', url: '/crops/peas.jpg' },
+    { label: 'Purple Brinjal', url: '/crops/brinjal.jpg' },
+    { label: 'Fresh Ginger', url: '/crops/ginger.jpg' },
+    { label: 'White Garlic', url: '/crops/garlic.jpg' },
+    { label: 'Shimla Apples', url: '/crops/apples.jpg' },
+    { label: 'Alphonso Mangoes', url: '/crops/mangoes.jpg' },
+    { label: 'Yellow Bananas', url: '/crops/bananas.jpg' },
+    { label: 'Nagpur Oranges', url: '/crops/oranges.jpg' },
+    { label: 'Pomegranate', url: '/crops/pomegranate.jpg' },
+    { label: 'Seedless Grapes', url: '/crops/grapes.jpg' },
+    { label: 'Strawberries', url: '/crops/strawberries.jpg' },
+    { label: 'Watermelon', url: '/crops/watermelon.jpg' },
+    { label: 'Golden Papaya', url: '/crops/papaya.jpg' },
+    { label: 'Golden Wheat', url: '/crops/wheat.jpg' }
   ];
 
   const handleSubmit = async (e) => {
@@ -183,10 +195,56 @@ export function AddCropListing({ currentRole, onCreated, onCancel }) {
               <input
                 type="text"
                 required
+                list="farm-locations-list"
+                placeholder="e.g. Nashik, Maharashtra or Kolar, Karnataka"
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                 className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
               />
+              <datalist id="farm-locations-list">
+                <option value="Nashik, Maharashtra" />
+                <option value="Pune, Maharashtra" />
+                <option value="Satara, Maharashtra" />
+                <option value="Jalgaon, Maharashtra" />
+                <option value="Ratnagiri, Maharashtra" />
+                <option value="Kolar, Karnataka" />
+                <option value="Bengaluru Rural, Karnataka" />
+                <option value="Shimla, Himachal Pradesh" />
+                <option value="Srinagar, Jammu & Kashmir" />
+                <option value="Ludhiana, Punjab" />
+                <option value="Khanna, Punjab" />
+                <option value="Ooty, Tamil Nadu" />
+                <option value="Indore, Madhya Pradesh" />
+                <option value="Chhindwara, Madhya Pradesh" />
+                <option value="Udaipur, Rajasthan" />
+                <option value="Kota, Rajasthan" />
+                <option value="Guntur, Andhra Pradesh" />
+                <option value="Anantapur, Andhra Pradesh" />
+                <option value="Anand, Gujarat" />
+              </datalist>
+              <div className="flex flex-wrap gap-1 mt-1.5">
+                {['Nashik', 'Kolar', 'Shimla', 'Srinagar', 'Ludhiana', 'Ooty', 'Guntur'].map((city) => (
+                  <button
+                    key={city}
+                    type="button"
+                    onClick={() => {
+                      const fullMap = {
+                        'Nashik': 'Nashik, Maharashtra',
+                        'Kolar': 'Kolar, Karnataka',
+                        'Shimla': 'Shimla, Himachal Pradesh',
+                        'Srinagar': 'Srinagar, Jammu & Kashmir',
+                        'Ludhiana': 'Ludhiana, Punjab',
+                        'Ooty': 'Ooty, Tamil Nadu',
+                        'Guntur': 'Guntur, Andhra Pradesh'
+                      };
+                      setFormData({ ...formData, location: fullMap[city] || city });
+                    }}
+                    className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 hover:bg-emerald-100 text-slate-600 hover:text-emerald-800 transition-colors"
+                  >
+                    +{city}
+                  </button>
+                ))}
+              </div>
             </div>
 
           </div>
@@ -215,7 +273,15 @@ export function AddCropListing({ currentRole, onCreated, onCancel }) {
                     formData.photoUrl === img.url ? 'border-emerald-600 scale-95 shadow-md' : 'border-transparent hover:border-slate-300'
                   }`}
                 >
-                  <img src={img.url} alt={img.label} className="w-full h-16 object-cover" />
+                  <img 
+                    src={resolveCropImageUrl(img.url, img.label)} 
+                    alt={img.label} 
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = getCropImageFallback(img.label);
+                    }}
+                    className="w-full h-16 object-cover" 
+                  />
                   <p className="text-[10px] font-bold text-center py-1 bg-slate-100 text-slate-700 truncate px-1">
                     {img.label}
                   </p>

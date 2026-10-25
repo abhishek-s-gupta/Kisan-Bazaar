@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { db } from '../db/database';
 import { MessageSquare, Send, CheckCheck, Sparkles, User, Tag, ArrowRight, Check, Info, ChevronDown, ChevronUp, DollarSign } from 'lucide-react';
+import { resolveCropImageUrl, getCropImageFallback } from '../utils/cropImages';
 
 export function DirectNegotiationChat({ currentRole, targetListing, onProceedToOrder }) {
   const [activeChat, setActiveChat] = useState(null);
@@ -159,7 +160,15 @@ export function DirectNegotiationChat({ currentRole, targetListing, onProceedToO
 
         {showCropDetailsMobile && targetListing && (
           <div className="mt-3 pt-3 border-t border-slate-100 flex items-center gap-3">
-            <img src={targetListing.photoUrl} alt={targetListing.cropName} className="w-16 h-16 rounded-xl object-cover shrink-0" />
+            <img 
+              src={resolveCropImageUrl(targetListing.photoUrl, targetListing.cropName, targetListing.category)} 
+              alt={targetListing.cropName} 
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = getCropImageFallback(targetListing.cropName, targetListing.category);
+              }}
+              className="w-16 h-16 rounded-xl object-cover shrink-0" 
+            />
             <div className="text-xs space-y-0.5">
               <p className="font-bold text-slate-900">{targetListing.cropName}</p>
               <p className="text-slate-500">Farmer: {targetListing.farmerName} ({targetListing.farmerLocation})</p>
@@ -182,7 +191,15 @@ export function DirectNegotiationChat({ currentRole, targetListing, onProceedToO
 
             {targetListing && (
               <div className="mt-6 p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
-                <img src={targetListing.photoUrl} alt={targetListing.cropName} className="w-full h-32 object-cover rounded-lg mb-3" />
+                <img 
+                  src={resolveCropImageUrl(targetListing.photoUrl, targetListing.cropName, targetListing.category)} 
+                  alt={targetListing.cropName} 
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = getCropImageFallback(targetListing.cropName, targetListing.category);
+                  }}
+                  className="w-full h-32 object-cover rounded-lg mb-3" 
+                />
                 <h4 className="font-bold text-slate-900 text-sm">{targetListing.cropName}</h4>
                 <div className="flex items-center justify-between text-xs mt-1 text-slate-600">
                   <span>Listed Price:</span>

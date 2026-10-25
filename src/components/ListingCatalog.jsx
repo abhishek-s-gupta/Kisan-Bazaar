@@ -3,17 +3,19 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../db/database';
 import { Search, Filter, MapPin, Tag, PlusCircle, Check, Sparkles, MessageSquare, ArrowRight, ShieldCheck, ShoppingCart } from 'lucide-react';
+import { resolveCropImageUrl, getCropImageFallback } from '../utils/cropImages';
 
 export function ListingCatalog({ currentRole, onSelectListing, onStartChat, setActiveTab }) {
   const [listings, setListings] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedLocation, setSelectedLocation] = useState('All');
   const [selectedGrade, setSelectedGrade] = useState('All');
   const [maxPrice, setMaxPrice] = useState(200);
 
   useEffect(() => {
     fetchListings();
-  }, [selectedCategory, selectedGrade, maxPrice]);
+  }, [selectedCategory, selectedLocation, selectedGrade, maxPrice]);
 
   const fetchListings = async () => {
     let collection = db.listings.where('status').equals('Active');
@@ -21,6 +23,9 @@ export function ListingCatalog({ currentRole, onSelectListing, onStartChat, setA
 
     if (selectedCategory !== 'All') {
       data = data.filter(item => item.category === selectedCategory);
+    }
+    if (selectedLocation !== 'All') {
+      data = data.filter(item => item.farmerLocation.toLowerCase().includes(selectedLocation.toLowerCase()));
     }
     if (selectedGrade !== 'All') {
       data = data.filter(item => item.qualityGrade === selectedGrade);
@@ -62,14 +67,14 @@ export function ListingCatalog({ currentRole, onSelectListing, onStartChat, setA
         </div>
 
         {/* Filters Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           
           {/* Search Bar */}
-          <div className="relative md:col-span-1">
+          <div className="relative">
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
             <input
               type="text"
-              placeholder="Search crop, location, farmer..."
+              placeholder="Search crop, location..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none"
@@ -87,6 +92,27 @@ export function ListingCatalog({ currentRole, onSelectListing, onStartChat, setA
               <option value="Vegetables">Vegetables</option>
               <option value="Fruits">Fruits</option>
               <option value="Grains">Grains & Pulses</option>
+            </select>
+          </div>
+
+          {/* Location Filter */}
+          <div>
+            <select
+              value={selectedLocation}
+              onChange={(e) => setSelectedLocation(e.target.value)}
+              className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+            >
+              <option value="All">📍 All Locations (India)</option>
+              <option value="Maharashtra">Maharashtra (Nashik, Pune, Satara)</option>
+              <option value="Karnataka">Karnataka (Kolar, Bengaluru)</option>
+              <option value="Himachal Pradesh">Himachal Pradesh (Shimla)</option>
+              <option value="Jammu & Kashmir">Jammu & Kashmir (Srinagar)</option>
+              <option value="Punjab">Punjab (Ludhiana, Khanna)</option>
+              <option value="Tamil Nadu">Tamil Nadu (Ooty)</option>
+              <option value="Madhya Pradesh">Madhya Pradesh (Indore, Chhindwara)</option>
+              <option value="Rajasthan">Rajasthan (Udaipur, Kota)</option>
+              <option value="Andhra Pradesh">Andhra Pradesh (Guntur, Anantapur)</option>
+              <option value="Gujarat">Gujarat (Anand)</option>
             </select>
           </div>
 
@@ -129,7 +155,7 @@ export function ListingCatalog({ currentRole, onSelectListing, onStartChat, setA
         <div className="bg-white p-12 rounded-2xl text-center border border-dashed border-slate-300">
           <p className="text-slate-500 font-semibold text-sm mb-2">No crop produce found matching your filters.</p>
           <button 
-            onClick={() => { setSearchTerm(''); setSelectedCategory('All'); setSelectedGrade('All'); setMaxPrice(200); }}
+            onClick={() => { setSearchTerm(''); setSelectedCategory('All'); setSelectedLocation('All'); setSelectedGrade('All'); setMaxPrice(200); }}
             className="text-xs text-emerald-600 font-bold hover:underline"
           >
             Reset Filters
@@ -146,8 +172,12 @@ export function ListingCatalog({ currentRole, onSelectListing, onStartChat, setA
                 {/* Crop Photo with Badge */}
                 <div className="relative h-48 bg-slate-100 overflow-hidden">
                   <img
-                    src={item.photoUrl}
+                    src={resolveCropImageUrl(item.photoUrl, item.cropName, item.category)}
                     alt={item.cropName}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = getCropImageFallback(item.cropName, item.category);
+                    }}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-3 left-3 flex gap-2">

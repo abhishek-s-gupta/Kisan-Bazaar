@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { db } from '../db/database';
 import { ShoppingBag, ArrowRight, ShieldCheck, Truck, CreditCard, CheckCircle2, MapPin, Locate, Crosshair, Home, Building2, Store, Check, X } from 'lucide-react';
+import { resolveCropImageUrl, getCropImageFallback } from '../utils/cropImages';
 
 export function PlaceOrderSummary({ listing, agreedPrice, onOrderPlaced }) {
   const [quantity, setQuantity] = useState(500);
@@ -106,8 +107,12 @@ export function PlaceOrderSummary({ listing, agreedPrice, onOrderPlaced }) {
         {/* Selected Crop Card */}
         <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200 mb-6">
           <img
-            src={listing ? listing.photoUrl : 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&auto=format&fit=crop&q=80'}
-            alt="Crop"
+            src={resolveCropImageUrl(listing ? listing.photoUrl : null, listing ? listing.cropName : '', listing ? listing.category : '')}
+            alt={listing ? listing.cropName : 'Crop'}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = getCropImageFallback(listing ? listing.cropName : '', listing ? listing.category : '');
+            }}
             className="w-20 h-20 rounded-lg object-cover"
           />
           <div>
@@ -225,13 +230,39 @@ export function PlaceOrderSummary({ listing, agreedPrice, onOrderPlaced }) {
           </div>
 
           <div>
-            <label className="block text-[11px] font-bold text-slate-700 mb-1">City, State & Pincode</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-[11px] font-bold text-slate-700">City, State & Pincode</label>
+              <span className="text-[10px] text-slate-400 font-medium">Quick Pick City:</span>
+            </div>
             <input
               type="text"
               value={cityState}
               onChange={(e) => setCityState(e.target.value)}
               className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none"
             />
+            <div className="flex flex-wrap gap-1 mt-1.5">
+              {[
+                { city: 'Mumbai', full: 'Navi Mumbai, Maharashtra - 400703', area: 'APMC Market, Vashi' },
+                { city: 'Pune', full: 'Pune, Maharashtra - 411037', area: 'Market Yard, Gultekdi' },
+                { city: 'Delhi NCR', full: 'Delhi NCR - 110033', area: 'Azadpur Mandi Wholesale Yard' },
+                { city: 'Bengaluru', full: 'Bengaluru, Karnataka - 560022', area: 'Yeshwanthpur APMC Yard' },
+                { city: 'Hyderabad', full: 'Hyderabad, Telangana - 500035', area: 'Kothapet Fruit Market' },
+                { city: 'Ahmedabad', full: 'Ahmedabad, Gujarat - 380022', area: 'Jamalpur APMC Market' },
+                { city: 'Chandigarh', full: 'Chandigarh, Punjab - 160017', area: 'Sector 26 Grain Market' }
+              ].map((loc) => (
+                <button
+                  key={loc.city}
+                  type="button"
+                  onClick={() => {
+                    setCityState(loc.full);
+                    setStreetArea(loc.area);
+                  }}
+                  className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-white border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50 hover:text-emerald-800 text-slate-600 transition-colors"
+                >
+                  📍 {loc.city}
+                </button>
+              ))}
+            </div>
           </div>
 
         </div>

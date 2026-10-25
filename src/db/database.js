@@ -17,17 +17,56 @@ db.version(2).stores({
 
 // Seed data helper
 export async function seedDatabase() {
-  const listingsCount = await db.listings.count();
-  if (listingsCount >= 12) return; // Already has rich catalogue
+  // Fix any existing listings with broken/404 photoUrls in IndexedDB
+  try {
+    const existingListings = await db.listings.toArray();
+    for (const item of existingListings) {
+      let fixedUrl = null;
+      if (
+        !item.photoUrl || 
+        item.photoUrl.includes('photo-1598170845058-12ef4a45753b') || 
+        (item.cropName && item.cropName.toLowerCase().includes('carrot'))
+      ) {
+        fixedUrl = '/crops/carrots.jpg';
+      } else if (
+        item.photoUrl.includes('photo-1615485290382-441e4d049cb5') || 
+        (item.cropName && item.cropName.toLowerCase().includes('pomegranate'))
+      ) {
+        fixedUrl = '/crops/pomegranate.jpg';
+      }
 
-  console.log('Seeding extended crop catalogue (Fruits & Vegetables)...');
+      if (fixedUrl && item.photoUrl !== fixedUrl) {
+        await db.listings.update(item.id, { photoUrl: fixedUrl });
+      }
+    }
+
+    // Deduplicate any accidental duplicate listings by crop & location
+    const seenCrops = new Set();
+    for (const item of existingListings) {
+      const key = `${item.cropName}_${item.farmerLocation}_${item.pricePerUnit}`;
+      if (seenCrops.has(key)) {
+        await db.listings.delete(item.id);
+      } else {
+        seenCrops.add(key);
+      }
+    }
+  } catch (err) {
+    console.warn('Error verifying existing crop photos:', err);
+  }
+
+  // Check if new extended catalogue is already seeded (20+ crops including new vegetables and fruits)
+  const hasSpinach = await db.listings.where('cropName').equals('Fresh Spinach (Palak)').count();
+  const currentCount = await db.listings.count();
+  if (currentCount >= 22 && hasSpinach > 0) return;
+
+  console.log('Seeding extended crop catalogue (New Fruits, Vegetables & Pan-India Locations)...');
 
   // Clear existing to re-seed rich catalog
   await db.listings.clear();
   await db.users.clear();
 
-  // Seed Farmers & Buyers
-  const farmerId = await db.users.add({
+  // Seed Farmers & Buyers across Diverse Agricultural Hubs in India
+  const farmer1 = await db.users.add({
     name: 'Ramesh Patil',
     role: 'Farmer',
     phone: '+91 98230 12345',
@@ -35,7 +74,7 @@ export async function seedDatabase() {
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80'
   });
 
-  const farmer2Id = await db.users.add({
+  const farmer2 = await db.users.add({
     name: 'Suresh Kumar',
     role: 'Farmer',
     phone: '+91 94120 54321',
@@ -43,12 +82,60 @@ export async function seedDatabase() {
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80'
   });
 
-  const farmer3Id = await db.users.add({
+  const farmer3 = await db.users.add({
     name: 'Balwinder Singh',
     role: 'Farmer',
     phone: '+91 98140 88776',
     location: 'Shimla, Himachal Pradesh',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
+  });
+
+  const farmer4 = await db.users.add({
+    name: 'Venkatesh Rao',
+    role: 'Farmer',
+    phone: '+91 98450 11223',
+    location: 'Kolar, Karnataka',
+    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80'
+  });
+
+  const farmer5 = await db.users.add({
+    name: 'Ghulam Nabi Dar',
+    role: 'Farmer',
+    phone: '+91 94190 33445',
+    location: 'Srinagar, Jammu & Kashmir',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80'
+  });
+
+  const farmer6 = await db.users.add({
+    name: 'Gurpreet Singh',
+    role: 'Farmer',
+    phone: '+91 98765 44321',
+    location: 'Ludhiana, Punjab',
+    avatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150&auto=format&fit=crop&q=80'
+  });
+
+  const farmer7 = await db.users.add({
+    name: 'Manickam',
+    role: 'Farmer',
+    phone: '+91 94431 88776',
+    location: 'Ooty, Tamil Nadu',
+    avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80'
+  });
+
+  const farmer8 = await db.users.add({
+    name: 'Rajesh Patel',
+    role: 'Farmer',
+    phone: '+91 98251 77665',
+    location: 'Anand, Gujarat',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80'
+  });
+
+  const farmer9 = await db.users.add({
+    name: 'Subba Reddy',
+    role: 'Farmer',
+    phone: '+91 98480 99887',
+    location: 'Guntur, Andhra Pradesh',
+    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80'
   });
 
   const buyerId = await db.users.add({
@@ -59,11 +146,11 @@ export async function seedDatabase() {
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80'
   });
 
-  // Rich Seed Crop Listings (Expanded Fruits & Vegetables)
+  // Rich Seed Crop Listings (Expanded Vegetables, Fruits & Grains)
   await db.listings.bulkAdd([
     // Vegetables
     {
-      farmerId: farmerId,
+      farmerId: farmer1,
       farmerName: 'Ramesh Patil',
       farmerLocation: 'Nashik, Maharashtra',
       cropName: 'Fresh Tomatoes',
@@ -73,12 +160,12 @@ export async function seedDatabase() {
       qualityGrade: 'A Grade',
       pricePerUnit: 20,
       description: 'Organic, farm-fresh vine-ripened red tomatoes direct from Nashik farm.',
-      photoUrl: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=500&auto=format&fit=crop&q=80',
+      photoUrl: '/crops/tomatoes.jpg',
       status: 'Active',
       createdAt: new Date().toISOString()
     },
     {
-      farmerId: farmerId,
+      farmerId: farmer1,
       farmerName: 'Ramesh Patil',
       farmerLocation: 'Pune, Maharashtra',
       cropName: 'Red Onions',
@@ -88,12 +175,12 @@ export async function seedDatabase() {
       qualityGrade: 'A Grade',
       pricePerUnit: 18,
       description: 'High storage life Nasik red onions, medium-to-large size bulbs.',
-      photoUrl: 'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=500&auto=format&fit=crop&q=80',
+      photoUrl: '/crops/onions.jpg',
       status: 'Active',
       createdAt: new Date().toISOString()
     },
     {
-      farmerId: farmer2Id,
+      farmerId: farmer2,
       farmerName: 'Suresh Kumar',
       farmerLocation: 'Indore, Madhya Pradesh',
       cropName: 'Fresh Potatoes',
@@ -103,27 +190,27 @@ export async function seedDatabase() {
       qualityGrade: 'B Grade',
       pricePerUnit: 16,
       description: 'Cleaned table quality potatoes, uniform size suitable for bulk buyers.',
-      photoUrl: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=500&auto=format&fit=crop&q=80',
+      photoUrl: '/crops/potatoes.jpg',
       status: 'Active',
       createdAt: new Date().toISOString()
     },
     {
-      farmerId: farmer2Id,
-      farmerName: 'Suresh Kumar',
-      farmerLocation: 'Solapur, Maharashtra',
+      farmerId: farmer9,
+      farmerName: 'Subba Reddy',
+      farmerLocation: 'Guntur, Andhra Pradesh',
       cropName: 'Green Chillies',
       category: 'Vegetables',
       quantity: 600,
       unit: 'kg',
       qualityGrade: 'A Grade',
-      pricePerUnit: 30,
-      description: 'Spicy sharp green chillies harvested fresh this morning.',
-      photoUrl: 'https://images.unsplash.com/photo-1588252303782-cb80119abd6d?w=500&auto=format&fit=crop&q=80',
+      pricePerUnit: 32,
+      description: 'Spicy sharp hot green chillies harvested fresh from Guntur fields.',
+      photoUrl: '/crops/chillies.jpg',
       status: 'Active',
       createdAt: new Date().toISOString()
     },
     {
-      farmerId: farmerId,
+      farmerId: farmer1,
       farmerName: 'Ramesh Patil',
       farmerLocation: 'Satara, Maharashtra',
       cropName: 'Organic Carrots',
@@ -133,12 +220,12 @@ export async function seedDatabase() {
       qualityGrade: 'A Grade',
       pricePerUnit: 25,
       description: 'Sweet crunch red carrots grown organically without pesticides.',
-      photoUrl: 'https://images.unsplash.com/photo-1598170845058-12ef4a45753b?w=500&auto=format&fit=crop&q=80',
+      photoUrl: '/crops/carrots.jpg',
       status: 'Active',
       createdAt: new Date().toISOString()
     },
     {
-      farmerId: farmer2Id,
+      farmerId: farmer2,
       farmerName: 'Suresh Kumar',
       farmerLocation: 'Udaipur, Rajasthan',
       cropName: 'Fresh Cauliflower',
@@ -148,29 +235,119 @@ export async function seedDatabase() {
       qualityGrade: 'A Grade',
       pricePerUnit: 22,
       description: 'Bright white snow-head cauliflowers, tight curds harvested fresh.',
-      photoUrl: 'https://images.unsplash.com/photo-1568584711075-3d021a7c3ca3?w=500&auto=format&fit=crop&q=80',
+      photoUrl: '/crops/cauliflower.jpg',
       status: 'Active',
       createdAt: new Date().toISOString()
     },
     {
-      farmerId: farmerId,
-      farmerName: 'Ramesh Patil',
-      farmerLocation: 'Nashik, Maharashtra',
+      farmerId: farmer4,
+      farmerName: 'Venkatesh Rao',
+      farmerLocation: 'Kolar, Karnataka',
       cropName: 'Green Capsicum (Bell Pepper)',
       category: 'Vegetables',
       quantity: 400,
       unit: 'kg',
       qualityGrade: 'A Grade',
-      pricePerUnit: 40,
-      description: 'Firm thick-walled green capsicums direct from greenhouse.',
-      photoUrl: 'https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?w=500&auto=format&fit=crop&q=80',
+      pricePerUnit: 38,
+      description: 'Firm thick-walled green capsicums direct from Kolar greenhouse farms.',
+      photoUrl: '/crops/capsicum.jpg',
+      status: 'Active',
+      createdAt: new Date().toISOString()
+    },
+    {
+      farmerId: farmer4,
+      farmerName: 'Venkatesh Rao',
+      farmerLocation: 'Bengaluru Rural, Karnataka',
+      cropName: 'Fresh Spinach (Palak)',
+      category: 'Vegetables',
+      quantity: 350,
+      unit: 'kg',
+      qualityGrade: 'A Grade',
+      pricePerUnit: 20,
+      description: 'Tender baby green spinach leaves, washed and neatly bundled, rich in iron.',
+      photoUrl: '/crops/spinach.jpg',
+      status: 'Active',
+      createdAt: new Date().toISOString()
+    },
+    {
+      farmerId: farmer7,
+      farmerName: 'Manickam',
+      farmerLocation: 'Ooty, Tamil Nadu',
+      cropName: 'Highland Fresh Broccoli',
+      category: 'Vegetables',
+      quantity: 450,
+      unit: 'kg',
+      qualityGrade: 'A Grade',
+      pricePerUnit: 48,
+      description: 'Cool-climate Nilgiris exotic dark green broccoli heads, tightly packed export grade.',
+      photoUrl: '/crops/broccoli.jpg',
+      status: 'Active',
+      createdAt: new Date().toISOString()
+    },
+    {
+      farmerId: farmer6,
+      farmerName: 'Gurpreet Singh',
+      farmerLocation: 'Ludhiana, Punjab',
+      cropName: 'Sweet Green Peas (Matar)',
+      category: 'Vegetables',
+      quantity: 900,
+      unit: 'kg',
+      qualityGrade: 'A Grade',
+      pricePerUnit: 35,
+      description: 'Naturally sweet fresh pod green peas directly harvested from fertile Punjab soil.',
+      photoUrl: '/crops/peas.jpg',
+      status: 'Active',
+      createdAt: new Date().toISOString()
+    },
+    {
+      farmerId: farmer8,
+      farmerName: 'Rajesh Patel',
+      farmerLocation: 'Anand, Gujarat',
+      cropName: 'Purple Brinjal (Eggplant)',
+      category: 'Vegetables',
+      quantity: 700,
+      unit: 'kg',
+      qualityGrade: 'A Grade',
+      pricePerUnit: 24,
+      description: 'Glossy deep purple tender brinjals, seedless flesh ideal for culinary markets.',
+      photoUrl: '/crops/brinjal.jpg',
+      status: 'Active',
+      createdAt: new Date().toISOString()
+    },
+    {
+      farmerId: farmer2,
+      farmerName: 'Suresh Kumar',
+      farmerLocation: 'Chhindwara, Madhya Pradesh',
+      cropName: 'Aromatic Fresh Ginger',
+      category: 'Vegetables',
+      quantity: 500,
+      unit: 'kg',
+      qualityGrade: 'A Grade',
+      pricePerUnit: 75,
+      description: 'Plump pungent fresh golden ginger roots with high essential oil content.',
+      photoUrl: '/crops/ginger.jpg',
+      status: 'Active',
+      createdAt: new Date().toISOString()
+    },
+    {
+      farmerId: farmer2,
+      farmerName: 'Suresh Kumar',
+      farmerLocation: 'Indore, Madhya Pradesh',
+      cropName: 'White Pungent Garlic',
+      category: 'Vegetables',
+      quantity: 400,
+      unit: 'kg',
+      qualityGrade: 'A Grade',
+      pricePerUnit: 110,
+      description: 'Sun-cured white paper-skin garlic bulbs with tight aromatic cloves.',
+      photoUrl: '/crops/garlic.jpg',
       status: 'Active',
       createdAt: new Date().toISOString()
     },
 
     // Fruits
     {
-      farmerId: farmer2Id,
+      farmerId: farmer2,
       farmerName: 'Suresh Kumar',
       farmerLocation: 'Ratnagiri, Maharashtra',
       cropName: 'Alphonso Mangoes',
@@ -179,13 +356,13 @@ export async function seedDatabase() {
       unit: 'kg',
       qualityGrade: 'A Grade',
       pricePerUnit: 120,
-      description: 'Naturally ripened GI Tagged Ratnagiri Alphonso mangoes.',
-      photoUrl: 'https://images.unsplash.com/photo-1553279768-865429fa0078?w=500&auto=format&fit=crop&q=80',
+      description: 'Naturally ripened GI Tagged Ratnagiri Alphonso mangoes, rich saffron pulp.',
+      photoUrl: '/crops/mangoes.jpg',
       status: 'Active',
       createdAt: new Date().toISOString()
     },
     {
-      farmerId: farmer3Id,
+      farmerId: farmer3,
       farmerName: 'Balwinder Singh',
       farmerLocation: 'Shimla, Himachal Pradesh',
       cropName: 'Royal Delicious Apples',
@@ -195,12 +372,27 @@ export async function seedDatabase() {
       qualityGrade: 'A Grade',
       pricePerUnit: 90,
       description: 'Crispy juicy red Shimla apples harvested from high altitude orchards.',
-      photoUrl: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=500&auto=format&fit=crop&q=80',
+      photoUrl: '/crops/apples.jpg',
       status: 'Active',
       createdAt: new Date().toISOString()
     },
     {
-      farmerId: farmerId,
+      farmerId: farmer5,
+      farmerName: 'Ghulam Nabi Dar',
+      farmerLocation: 'Srinagar, Jammu & Kashmir',
+      cropName: 'Kashmiri Red Delicious Apples',
+      category: 'Fruits',
+      quantity: 2500,
+      unit: 'kg',
+      qualityGrade: 'A Grade',
+      pricePerUnit: 95,
+      description: 'Sweet high-aroma crimson Kashmiri mountain apples from Sopore valley.',
+      photoUrl: '/crops/apples.jpg',
+      status: 'Active',
+      createdAt: new Date().toISOString()
+    },
+    {
+      farmerId: farmer1,
       farmerName: 'Ramesh Patil',
       farmerLocation: 'Jalgaon, Maharashtra',
       cropName: 'Grand Naine Bananas',
@@ -210,12 +402,12 @@ export async function seedDatabase() {
       qualityGrade: 'A Grade',
       pricePerUnit: 15,
       description: 'Premium Jalgaon yellow bananas, high sweet index and long shelf life.',
-      photoUrl: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=500&auto=format&fit=crop&q=80',
+      photoUrl: '/crops/bananas.jpg',
       status: 'Active',
       createdAt: new Date().toISOString()
     },
     {
-      farmerId: farmer3Id,
+      farmerId: farmer3,
       farmerName: 'Balwinder Singh',
       farmerLocation: 'Nagpur, Maharashtra',
       cropName: 'Nagpur Oranges (Santra)',
@@ -224,13 +416,13 @@ export async function seedDatabase() {
       unit: 'kg',
       qualityGrade: 'A Grade',
       pricePerUnit: 45,
-      description: 'Sweet tangy juicy Nagpur oranges, fresh harvest.',
-      photoUrl: 'https://images.unsplash.com/photo-1547514701-42782101795e?w=500&auto=format&fit=crop&q=80',
+      description: 'Sweet tangy juicy Nagpur oranges, fresh harvest with thin peel.',
+      photoUrl: '/crops/oranges.jpg',
       status: 'Active',
       createdAt: new Date().toISOString()
     },
     {
-      farmerId: farmer2Id,
+      farmerId: farmer2,
       farmerName: 'Suresh Kumar',
       farmerLocation: 'Solapur, Maharashtra',
       cropName: 'Bhagwa Pomegranates',
@@ -240,39 +432,106 @@ export async function seedDatabase() {
       qualityGrade: 'A Grade',
       pricePerUnit: 85,
       description: 'Deep red arils, sweet rich juice Bhagwa variety pomegranates.',
-      photoUrl: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=500&auto=format&fit=crop&q=80',
+      photoUrl: '/crops/pomegranate.jpg',
+      status: 'Active',
+      createdAt: new Date().toISOString()
+    },
+    {
+      farmerId: farmer1,
+      farmerName: 'Ramesh Patil',
+      farmerLocation: 'Nashik, Maharashtra',
+      cropName: 'Thompson Seedless Grapes',
+      category: 'Fruits',
+      quantity: 1200,
+      unit: 'kg',
+      qualityGrade: 'A Grade',
+      pricePerUnit: 60,
+      description: 'Sweet crunchy green Thompson seedless grapes directly from Nashik vineyards.',
+      photoUrl: '/crops/grapes.jpg',
+      status: 'Active',
+      createdAt: new Date().toISOString()
+    },
+    {
+      farmerId: farmer1,
+      farmerName: 'Ramesh Patil',
+      farmerLocation: 'Satara, Maharashtra',
+      cropName: 'Mahabaleshwar Strawberries',
+      category: 'Fruits',
+      quantity: 300,
+      unit: 'kg',
+      qualityGrade: 'A Grade',
+      pricePerUnit: 140,
+      description: 'Fragrant sweet red strawberries handpicked from misty Mahabaleshwar plateau.',
+      photoUrl: '/crops/strawberries.jpg',
+      status: 'Active',
+      createdAt: new Date().toISOString()
+    },
+    {
+      farmerId: farmer2,
+      farmerName: 'Suresh Kumar',
+      farmerLocation: 'Kota, Rajasthan',
+      cropName: 'Sugar-Baby Watermelon',
+      category: 'Fruits',
+      quantity: 3500,
+      unit: 'kg',
+      qualityGrade: 'A Grade',
+      pricePerUnit: 18,
+      description: 'Deep red crisp-flesh watermelons, high brix sweetness and juicy texture.',
+      photoUrl: '/crops/watermelon.jpg',
+      status: 'Active',
+      createdAt: new Date().toISOString()
+    },
+    {
+      farmerId: farmer9,
+      farmerName: 'Subba Reddy',
+      farmerLocation: 'Anantapur, Andhra Pradesh',
+      cropName: 'Sweet Golden Papaya',
+      category: 'Fruits',
+      quantity: 1400,
+      unit: 'kg',
+      qualityGrade: 'A Grade',
+      pricePerUnit: 22,
+      description: 'Naturally tree-ripened golden yellow Red Lady papayas, sweet and healthy.',
+      photoUrl: '/crops/papaya.jpg',
       status: 'Active',
       createdAt: new Date().toISOString()
     },
 
-    // Grains
+    // Grains & Pulses
     {
-      farmerId: farmerId,
-      farmerName: 'Ramesh Patil',
-      farmerLocation: 'Nashik, Maharashtra',
+      farmerId: farmer6,
+      farmerName: 'Gurpreet Singh',
+      farmerLocation: 'Khanna, Punjab',
       cropName: 'Sharbati Wheat',
       category: 'Grains',
       quantity: 5000,
       unit: 'kg',
       qualityGrade: 'A Grade',
       pricePerUnit: 35,
-      description: 'Golden high protein Sharbati wheat grains, machine sorted.',
-      photoUrl: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=500&auto=format&fit=crop&q=80',
+      description: 'Golden high protein Sharbati wheat grains, machine sorted and clean.',
+      photoUrl: '/crops/wheat.jpg',
       status: 'Active',
       createdAt: new Date().toISOString()
     }
   ]);
 
-  // Seed Market Prices
+  // Seed Market Prices across APMC Mandis
   const marketPricesCount = await db.marketPrices.count();
-  if (marketPricesCount === 0) {
+  if (marketPricesCount < 10) {
+    await db.marketPrices.clear();
     await db.marketPrices.bulkAdd([
       { cropName: 'Tomato', mandi: 'Nashik APMC', state: 'Maharashtra', minPrice: 16, maxPrice: 22, modalPrice: 20, trend: 'up', date: 'Today' },
+      { cropName: 'Tomato', mandi: 'Kolar APMC', state: 'Karnataka', minPrice: 18, maxPrice: 24, modalPrice: 21, trend: 'up', date: 'Today' },
       { cropName: 'Onion', mandi: 'Lasalgaon APMC', state: 'Maharashtra', minPrice: 14, maxPrice: 20, modalPrice: 18, trend: 'stable', date: 'Today' },
       { cropName: 'Potato', mandi: 'Indore APMC', state: 'Madhya Pradesh', minPrice: 13, maxPrice: 18, modalPrice: 16, trend: 'down', date: 'Today' },
       { cropName: 'Apple', mandi: 'Shimla APMC', state: 'Himachal Pradesh', minPrice: 75, maxPrice: 95, modalPrice: 85, trend: 'up', date: 'Today' },
+      { cropName: 'Apple', mandi: 'Srinagar Mandi', state: 'Jammu & Kashmir', minPrice: 80, maxPrice: 105, modalPrice: 92, trend: 'up', date: 'Today' },
       { cropName: 'Banana', mandi: 'Jalgaon APMC', state: 'Maharashtra', minPrice: 12, maxPrice: 16, modalPrice: 14, trend: 'stable', date: 'Today' },
-      { cropName: 'Wheat', mandi: 'Khanna APMC', state: 'Punjab', minPrice: 32, maxPrice: 38, modalPrice: 35, trend: 'up', date: 'Today' }
+      { cropName: 'Wheat', mandi: 'Khanna APMC', state: 'Punjab', minPrice: 32, maxPrice: 38, modalPrice: 35, trend: 'up', date: 'Today' },
+      { cropName: 'Chilli', mandi: 'Guntur APMC', state: 'Andhra Pradesh', minPrice: 28, maxPrice: 36, modalPrice: 32, trend: 'up', date: 'Today' },
+      { cropName: 'Broccoli', mandi: 'Ooty APMC', state: 'Tamil Nadu', minPrice: 40, maxPrice: 55, modalPrice: 48, trend: 'stable', date: 'Today' },
+      { cropName: 'Green Peas', mandi: 'Azadpur Mandi', state: 'Delhi', minPrice: 30, maxPrice: 42, modalPrice: 36, trend: 'down', date: 'Today' },
+      { cropName: 'Grapes', mandi: 'Nashik APMC', state: 'Maharashtra', minPrice: 50, maxPrice: 70, modalPrice: 60, trend: 'up', date: 'Today' }
     ]);
   }
 
@@ -299,9 +558,19 @@ export async function seedDatabase() {
         likes: 38,
         commentsCount: 12,
         createdAt: '1 day ago'
+      },
+      {
+        authorName: 'Manickam',
+        authorRole: 'Highland Horticulturist',
+        category: 'Exotic Vegetables',
+        title: 'Broccoli yield boost in Nilgiris highland weather',
+        content: 'Raised beds with pine needle mulching retained optimum soil moisture and prevented root rot during heavy showers.',
+        likes: 42,
+        commentsCount: 15,
+        createdAt: 'Just now'
       }
     ]);
   }
 
-  console.log('Catalogue successfully updated with multiple fruits & vegetables!');
+  console.log('Catalogue successfully updated with 24+ fruits, vegetables & pan-India locations!');
 }

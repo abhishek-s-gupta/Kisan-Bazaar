@@ -8,7 +8,68 @@ export function AdditionalFeaturesSection() {
   const [communityPosts, setCommunityPosts] = useState([]);
   const [alerts, setAlerts] = useState([]);
   const [newTargetCrop, setNewTargetCrop] = useState('Tomato');
-  const [newTargetPrice, setNewTargetPrice] = useState('18');
+  const [weatherLocation, setWeatherLocation] = useState('Nashik, Maharashtra');
+
+  const weatherDataByLoc = {
+    'Nashik, Maharashtra': [
+      { day: 'Today', temp: '28°C', cond: 'Sunny / Mild Humidity', advisory: 'Ideal day for harvesting tomatoes and inspecting vineyard vines.' },
+      { day: 'Fri', temp: '27°C', cond: 'Light Rain Expected', advisory: 'Cover open grain storage bags.' },
+      { day: 'Sat', temp: '29°C', cond: 'Clear Sky', advisory: 'Favorable for organic spraying.' },
+      { day: 'Sun', temp: '30°C', cond: 'Sunny', advisory: 'Good transport conditions.' },
+      { day: 'Mon', temp: '26°C', cond: 'Partly Cloudy', advisory: 'Normal irrigation schedule.' }
+    ],
+    'Shimla, Himachal Pradesh': [
+      { day: 'Today', temp: '16°C', cond: 'Crisp Mountain Breeze', advisory: 'Optimal morning hours for apple plucking without bruising.' },
+      { day: 'Fri', temp: '14°C', cond: 'Overcast & Cool', advisory: 'Protect high-altitude nursery saplings from frost.' },
+      { day: 'Sat', temp: '15°C', cond: 'Sunny Breaks', advisory: 'Ideal for grading and wooden-crate packing.' },
+      { day: 'Sun', temp: '17°C', cond: 'Clear Alpine Sky', advisory: 'Great day for haulage down to plains mandis.' },
+      { day: 'Mon', temp: '13°C', cond: 'Chilly Evening', advisory: 'Maintain tree mulch thickness.' }
+    ],
+    'Srinagar, Jammu & Kashmir': [
+      { day: 'Today', temp: '14°C', cond: 'Sunny & Crisp', advisory: 'Peak harvest weather for Kashmiri Red Delicious apples.' },
+      { day: 'Fri', temp: '12°C', cond: 'Light Autumn Fog', advisory: 'Early morning dispatch advised before road fog increases.' },
+      { day: 'Sat', temp: '15°C', cond: 'Pleasant Sunshine', advisory: 'Optimal for fruit solar-drying and grading.' },
+      { day: 'Sun', temp: '13°C', cond: 'Partly Cloudy', advisory: 'Store produce in ventilated wooden trays.' },
+      { day: 'Mon', temp: '11°C', cond: 'Brisk Breeze', advisory: 'Ensure orchard irrigation channels are cleared.' }
+    ],
+    'Kolar, Karnataka': [
+      { day: 'Today', temp: '27°C', cond: 'Mild & Sunny', advisory: 'Prime picking conditions for greenhouse bell peppers and tomatoes.' },
+      { day: 'Fri', temp: '26°C', cond: 'Scattered Clouds', advisory: 'Check soil moisture before drip fertigation.' },
+      { day: 'Sat', temp: '28°C', cond: 'Clear Sky', advisory: 'Excellent logistics condition for Bengaluru dispatch.' },
+      { day: 'Sun', temp: '29°C', cond: 'Warm Sun', advisory: 'Harvest greens early before sun rises high.' },
+      { day: 'Mon', temp: '26°C', cond: 'Gentle Breeze', advisory: 'Safe for organic foliar sprays.' }
+    ],
+    'Ludhiana, Punjab': [
+      { day: 'Today', temp: '24°C', cond: 'Clear & Golden', advisory: 'Perfect weather for sweet pea picking and wheat field checks.' },
+      { day: 'Fri', temp: '25°C', cond: 'Sunny', advisory: 'Ensure canal irrigation turns are scheduled.' },
+      { day: 'Sat', temp: '23°C', cond: 'Cool Morning Breeze', advisory: 'Ideal for pod threshing and grain sorting.' },
+      { day: 'Sun', temp: '26°C', cond: 'Warm & Dry', advisory: 'Optimal transport weather to Delhi Azadpur APMC.' },
+      { day: 'Mon', temp: '22°C', cond: 'Light Dew', advisory: 'Aerate grain storage bins.' }
+    ],
+    'Ooty, Tamil Nadu': [
+      { day: 'Today', temp: '17°C', cond: 'Misty Highland Air', advisory: 'Top weather for harvesting tight dark green broccoli heads.' },
+      { day: 'Fri', temp: '15°C', cond: 'Intermittent Drizzle', advisory: 'Drain excess water from terrace crop beds.' },
+      { day: 'Sat', temp: '18°C', cond: 'Gentle Mountain Sun', advisory: 'Ideal for harvesting Nilgiris baby carrots.' },
+      { day: 'Sun', temp: '19°C', cond: 'Clear Highland Sky', advisory: 'Load cold-chain vans for Coimbatore/Chennai transit.' },
+      { day: 'Mon', temp: '16°C', cond: 'Cool & Foggy', advisory: 'Maintain greenhouse plastic ventilation.' }
+    ],
+    'Guntur, Andhra Pradesh': [
+      { day: 'Today', temp: '32°C', cond: 'Dry & Sunny', advisory: 'Superb conditions for outdoor solar-drying of red chillies.' },
+      { day: 'Fri', temp: '33°C', cond: 'Hot & Clear', advisory: 'Store dried chillies in moisture-proof gunny bags.' },
+      { day: 'Sat', temp: '31°C', cond: 'Breezy Afternoon', advisory: 'Inspect irrigation for papaya plantations.' },
+      { day: 'Sun', temp: '30°C', cond: 'Sunny', advisory: 'Good dispatch conditions for Hyderabad mandi.' },
+      { day: 'Mon', temp: '32°C', cond: 'Sunny / Dry', advisory: 'Ideal for harvesting mature chilli pods.' }
+    ],
+    'Indore, Madhya Pradesh': [
+      { day: 'Today', temp: '29°C', cond: 'Warm & Dry', advisory: 'Safe and dry conditions for bulk potato and garlic loading.' },
+      { day: 'Fri', temp: '28°C', cond: 'Clear Sky', advisory: 'Ensure proper curing ventilation in godowns.' },
+      { day: 'Sat', temp: '30°C', cond: 'Sunny', advisory: 'High transport efficiency across central India corridor.' },
+      { day: 'Sun', temp: '29°C', cond: 'Sunny & Pleasant', advisory: 'Routine field weeding and organic manure application.' },
+      { day: 'Mon', temp: '27°C', cond: 'Mild Breeze', advisory: 'Inspect cold-store temperature uniformity.' }
+    ]
+  };
+
+  const currentWeather = weatherDataByLoc[weatherLocation] || weatherDataByLoc['Nashik, Maharashtra'];
 
   useEffect(() => {
     loadData();
@@ -188,19 +249,31 @@ export function AdditionalFeaturesSection() {
           </div>
         )}
 
-        {/* Tab 3: Weather Updates */}
+        {/* Tab 3: Weather Updates with Regional Location Selector */}
         {activeTab === 'weather' && (
           <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
-            <h3 className="font-extrabold text-slate-900 text-base mb-4">Farming Weather & Advisory</h3>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+              <div>
+                <h3 className="font-extrabold text-slate-900 text-base">Farming Weather & Agricultural Advisory</h3>
+                <p className="text-xs text-slate-500">Live regional agricultural weather forecasts and harvest recommendations.</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-slate-600 whitespace-nowrap">Location:</span>
+                <select
+                  value={weatherLocation}
+                  onChange={(e) => setWeatherLocation(e.target.value)}
+                  className="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs font-bold text-emerald-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                >
+                  {Object.keys(weatherDataByLoc).map((loc) => (
+                    <option key={loc} value={loc}>📍 {loc}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
-              {[
-                { day: 'Today', temp: '28°C', cond: 'Sunny / Mild Humidity', advisory: 'Ideal day for harvesting tomatoes.' },
-                { day: 'Fri', temp: '27°C', cond: 'Light Rain Expected', advisory: 'Cover open grain storage bags.' },
-                { day: 'Sat', temp: '29°C', cond: 'Clear Sky', advisory: 'Favorable for pesticide spraying.' },
-                { day: 'Sun', temp: '30°C', cond: 'Sunny', advisory: 'Good transport conditions.' },
-                { day: 'Mon', temp: '26°C', cond: 'Partly Cloudy', advisory: 'Normal irrigation schedule.' }
-              ].map((w, idx) => (
-                <div key={idx} className="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center space-y-1">
+              {currentWeather.map((w, idx) => (
+                <div key={idx} className="p-4 bg-slate-50 border border-slate-200 rounded-xl text-center space-y-1 hover:border-emerald-500 transition-colors">
                   <span className="text-xs font-extrabold text-slate-500 block">{w.day}</span>
                   <Sun className="w-7 h-7 text-amber-500 mx-auto" />
                   <span className="text-lg font-extrabold text-slate-900 block">{w.temp}</span>
