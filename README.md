@@ -1,87 +1,259 @@
-# 🌾 Kisan Bazaar (Kissan Bazar)
+# 🌾 KISAN BAZAAR
+### From Farm to Market. Fair Prices. Stronger Farmers.
 
-> **Empowering Farmers. Strengthening Communities. Growing Together.**
+<p align="center">
+  <strong>🚜 Empowering Farmers • Connecting Markets • Growing Together</strong>
+</p>
 
-Kisan Bazaar is a modern, AI-powered agricultural marketplace platform built to connect farmers directly with buyers (wholesalers, retailers, and consumers). By cutting out unnecessary middlemen, Kisan Bazaar enables farmers to get fair prices for their produce while giving buyers direct access to fresh crops with quality guarantees, real-time negotiation, and transparent tracking.
+<p align="center">
+  An AI-powered agricultural marketplace connecting farmers directly with buyers through transparent pricing, intelligent negotiation, and trusted trade.
+</p>
 
----
+<p align="center">
+  <img src="https://img.shields.io/badge/NEXT.JS-16-000000?style=for-the-badge&logo=next.js&logoColor=white"/>
+  <img src="https://img.shields.io/badge/REACT-19-61DAFB?style=for-the-badge&logo=react&logoColor=black"/>
+  <img src="https://img.shields.io/badge/TAILWIND_CSS-3-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"/>
+  <img src="https://img.shields.io/badge/AI-GOOGLE_GEMINI-4285F4?style=for-the-badge&logo=google&logoColor=white"/>
+  <img src="https://img.shields.io/badge/LICENSE-MIT-22C55E?style=for-the-badge"/>
+</p>
 
-## ✨ Features
-
-- 🛒 **Direct Crop Marketplace**: Browse and list high-quality agricultural produce with detailed specs, quality grades, location, harvest dates, and certification badges.
-- 💬 **Live Negotiation & AI Assistant**: Direct chat interface between farmers and buyers powered by **Google Gemini AI** for smart price suggestions and counter-offer insights.
-- 🔐 **Secure Authentication**: JWT-based server authentication with role management (Farmer / Buyer switchable profiles).
-- 🚚 **Order Management & Logistics Tracking**: End-to-end status tracking from order confirmation to dispatch and final delivery.
-- 💳 **Escrow Payment Simulation**: Integrated payment checkout with interactive confetti feedback and payment safety guarantees.
-- ⭐ **Ratings & Reviews**: Transparent rating and feedback system for buyers and sellers to build trust within the community.
-- 🌓 **Dark & Light Mode**: Seamless theme toggling with Tailwind CSS styling and local storage memory.
-- 📱 **Responsive & Accessible UI**: Clean, modern design optimized for mobile phones, tablets, and desktop displays.
-
----
-
-## 🛠️ Tech Stack
-
-- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
-- **UI Library**: [React 19](https://react.dev/) & [Tailwind CSS 3](https://tailwindcss.com/)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **AI Integration**: [@google/genai SDK](https://www.npmjs.com/package/@google/genai) (Google Gemini API)
-- **Database**: 
-  - [Dexie.js](https://dexie.org/) (Client-side IndexedDB ORM)
-  - [SQLite3](https://www.sqlite.org/) (Server-side database storage)
-- **Auth & Security**: [JSON Web Tokens (JWT)](https://jwt.io/) & [Bcryptjs](https://www.npmjs.com/package/bcryptjs)
-- **Utility**: [Canvas Confetti](https://www.npmjs.com/package/canvas-confetti)
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=rect&color=0:052E16,50:166534,100:4ADE80&height=6" width="100%"/>
+</p>
 
 ---
 
-## 🚀 Getting Started
+## 🌱 THE VISION
 
-### Prerequisites
+**Agriculture feeds the world. Farmers deserve a better marketplace.**
 
-Ensure you have the following installed on your machine:
-- [Node.js](https://nodejs.org/) (v18.x or later)
-- npm, yarn, or pnpm
+Traditional agricultural markets often involve multiple intermediaries, limited price transparency, and communication barriers between farmers and buyers.
 
-### Installation
+Kisan Bazaar aims to change this.
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/your-username/kissan-bazar.git
-   cd kissan-bazar
-   ```
+We are building a digital agricultural ecosystem where farmers can showcase their produce, buyers can discover quality crops, and both sides can negotiate directly with the assistance of AI.
 
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**:
-   Create a `.env.local` file in the root directory and add your API keys:
-   ```env
-   GEMINI_API_KEY=your_google_gemini_api_key
-   JWT_SECRET=your_jwt_secret_key
-   ```
-
-4. **Run the development server**:
-   ```bash
-   npm run dev
-   ```
-
-5. **Open in Browser**:
-   Navigate to [http://localhost:3000](http://localhost:3000) to view the app in action.
+<blockquote>
+  <h3>🌾 Grow More. Earn Fairer. Trade Smarter.</h3>
+  A marketplace where technology meets agriculture and opportunities grow for everyone.
+</blockquote>
 
 ---
 
-## 📂 Project Structure
+## ✨ PLATFORM HIGHLIGHTS
+
+<table>
+<tr>
+<td width="50%">
+
+### 🛒 Direct Crop Marketplace
+
+Explore and list agricultural produce with detailed information, including:
+
+- Crop descriptions
+- Quality grades
+- Harvest dates
+- Location details
+- Certification information
+
+</td>
+<td width="50%">
+
+### 🤖 AI-Powered Negotiation
+
+Smart negotiation assistance powered by Google Gemini.
+
+- Intelligent price suggestions
+- Counter-offer insights
+- AI-assisted conversations
+- Better-informed buying decisions
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🔐 Secure Authentication
+
+A role-based authentication experience.
+
+- JWT-based authentication
+- Password hashing with bcrypt
+- Farmer and Buyer profiles
+- Profile switching functionality
+
+</td>
+<td width="50%">
+
+### 🚚 Smart Order Tracking
+
+Keep track of agricultural transactions.
+
+- Order confirmation
+- Processing and dispatch
+- Delivery status
+- Order history
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 💳 Interactive Payment Experience
+
+A simulated escrow-style checkout experience.
+
+- Interactive payment interface
+- Order payment summary
+- Payment confirmation feedback
+- Transaction status experience
+
+</td>
+<td width="50%">
+
+### ⭐ Ratings & Reviews
+
+Build trust across the agricultural marketplace.
+
+- Buyer and seller feedback
+- Product ratings
+- Transparent reviews
+- Community trust indicators
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🌓 Adaptive Theme
+
+A modern interface with two visual modes.
+
+- Dark mode
+- Light mode
+- Theme persistence
+- Consistent styling
+
+</td>
+<td width="50%">
+
+### 📱 Responsive Experience
+
+Designed for modern devices.
+
+- Mobile-friendly layouts
+- Tablet compatibility
+- Desktop experience
+- Accessible UI components
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🌿 HOW KISAN BAZAAR WORKS
+
+<p align="center">
+  <img src="https://img.shields.io/badge/01-JOIN_THE_MARKET-166534?style=for-the-badge"/>
+  &nbsp;➜&nbsp;
+  <img src="https://img.shields.io/badge/02-DISCOVER_CROPS-15803D?style=for-the-badge"/>
+  &nbsp;➜&nbsp;
+  <img src="https://img.shields.io/badge/03-NEGOTIATE-16A34A?style=for-the-badge"/>
+  &nbsp;➜&nbsp;
+  <img src="https://img.shields.io/badge/04-PLACE_ORDER-22C55E?style=for-the-badge"/>
+</p>
+
+| Step | Process | Description |
+|:---:|---|---|
+| 01 | 👨‍🌾 Join | Register as a Farmer or Buyer. |
+| 02 | 🌾 Discover | Browse agricultural produce and listings. |
+| 03 | 💬 Negotiate | Communicate and explore price suggestions. |
+| 04 | 🛍️ Purchase | Place orders through the checkout experience. |
+| 05 | 🚚 Track | Follow order progress and delivery status. |
+| 06 | ⭐ Review | Share feedback and build marketplace trust. |
+
+---
+
+## 📸 APPLICATION PREVIEW
+
+<p align="center">
+  <strong>Designed for a modern agricultural marketplace.</strong>
+  <br/>
+  <i>Clean layouts. Fresh colors. Seamless interactions.</i>
+</p>
+
+<!-- Add your actual screenshots in the public/screenshots directory -->
+
+<p align="center">
+  <img src="public/screenshots/home.png" width="48%" alt="Kisan Bazaar Homepage"/>
+  <img src="public/screenshots/marketplace.png" width="48%" alt="Crop Marketplace"/>
+</p>
+
+<p align="center">
+  <img src="public/screenshots/negotiation.png" width="48%" alt="AI Negotiation"/>
+  <img src="public/screenshots/orders.png" width="48%" alt="Order Tracking"/>
+</p>
+
+<p align="center">
+  <sub>Marketplace • AI Negotiation • Order Management • Buyer Experience</sub>
+</p>
+
+---
+
+## 🧠 AI-POWERED AGRICULTURAL NEGOTIATION
+
+Kisan Bazaar integrates Google's Gemini AI to assist buyers and farmers during price discussions.
+
+**The AI assistant focuses on:**
+
+- Understanding negotiation context.
+- Suggesting reasonable price discussions.
+- Providing counter-offer insights.
+- Helping users make informed decisions.
+
+> AI suggestions are informational and should not be treated as guaranteed market prices.
+
+---
+
+## 🛠️ TECHNOLOGY STACK
+
+<p align="center">
+  <img src="https://skillicons.dev/icons?i=nextjs,react,js,tailwind,nodejs,sqlite,git,github,vscode" />
+</p>
+
+| Technology | Purpose |
+|---|---|
+| Next.js 16 | Full-stack web application |
+| React 19 | Interactive user interface |
+| Tailwind CSS 3 | Responsive styling |
+| Lucide React | Modern icon system |
+| Google Gemini API | AI-powered negotiation assistant |
+| Dexie.js | Client-side IndexedDB management |
+| SQLite3 | Server-side database storage |
+| JWT | Authentication and session tokens |
+| Bcrypt.js | Password hashing |
+| Canvas Confetti | Interactive UI feedback |
+
+---
+
+## 🏗️ PROJECT ARCHITECTURE
 
 ```text
-Kissan Bazar/
-├── app/                  # Next.js App Router pages and API routes
-│   ├── api/              # Backend API endpoints (Auth, AI Chat, etc.)
-│   ├── globals.css       # Global CSS styles & Tailwind directives
-│   ├── layout.js         # Main layout wrapper
-│   └── page.js           # Main application view & tab switcher
+KISAN-BAZAAR/
+│
+├── app/
+│   ├── api/
+│   │   ├── auth/
+│   │   └── ...
+│   │
+│   ├── globals.css
+│   ├── layout.js
+│   └── page.js
+│
 ├── src/
-│   ├── components/       # Reusable UI components
+│   │
+│   ├── components/
 │   │   ├── AddCropListing.jsx
 │   │   ├── AdditionalFeaturesSection.jsx
 │   │   ├── AuthModal.jsx
@@ -92,40 +264,159 @@ Kissan Bazar/
 │   │   ├── PaymentCheckoutModal.jsx
 │   │   ├── PlaceOrderSummary.jsx
 │   │   └── RateReviewModal.jsx
-│   └── db/               # Client-side IndexedDB schema & seeds
-├── public/               # Static assets and images
-├── package.json          # Dependencies and scripts
-└── README.md             # Project documentation
+│   │
+│   └── db/
+│
+├── public/
+├── package.json
+└── README.md
 ```
 
 ---
 
-## 📜 Available Scripts
+## ⚙️ GETTING STARTED
 
-In the project directory, you can run:
+Get Kisan Bazaar running on your local machine.
+
+### Prerequisites
+
+- Node.js v18 or later (check compatibility with your Next.js version)
+- npm, yarn, or pnpm
+- Google Gemini API key
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/kissan-bazar.git
+```
+
+### 2. Navigate to the Project
+
+```bash
+cd kissan-bazar
+```
+
+### 3. Install Dependencies
+
+```bash
+npm install
+```
+
+### 4. Configure Environment Variables
+
+Create a `.env.local` file in the project root:
+
+```env
+GEMINI_API_KEY=your_google_gemini_api_key
+JWT_SECRET=your_secure_jwt_secret
+```
+
+**Important:** Never commit `.env.local` or expose secret API keys in frontend code.
+
+### 5. Start the Development Server
+
+```bash
+npm run dev
+```
+
+### 6. Open the Application
+
+Visit:
+
+```text
+http://localhost:3000
+```
+
+---
+
+## 📜 AVAILABLE SCRIPTS
 
 | Command | Description |
-| :--- | :--- |
-| `npm run dev` | Runs the app in development mode at `localhost:3000` |
-| `npm run build` | Builds the app for production optimization |
-| `npm run start` | Starts the production server |
-| `npm run lint` | Runs Next.js ESLint checks |
+|---|---|
+| `npm run dev` | Start development server |
+| `npm run build` | Create production build |
+| `npm run start` | Run production server |
+| `npm run lint` | Run code quality checks |
 
 ---
 
-## 🤝 Contributing
+## 🔮 FUTURE ROADMAP
 
-Contributions, issues, and feature requests are welcome!  
-Feel free to check the [issues page](https://github.com/your-username/kissan-bazar/issues).
+We envision Kisan Bazaar as a complete digital ecosystem for agricultural trade.
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+- [ ] Live agricultural market price integration
+- [ ] Multilingual support for regional farmers
+- [ ] Advanced AI crop price recommendations
+- [ ] Weather-based agricultural insights
+- [ ] Integrated real payment gateway
+- [ ] Verified farmer and buyer profiles
+- [ ] Advanced analytics dashboard
+- [ ] Real-time delivery and logistics integration
+- [ ] Mobile application
 
 ---
 
-## 📄 License
+## 🌍 OUR IMPACT
 
-Distributed under the MIT License. See `LICENSE` for more information.
+| Challenge | Kisan Bazaar's Approach |
+|---|---|
+| Limited market access | Direct digital marketplace |
+| Price uncertainty | Transparent crop listings |
+| Communication barriers | AI-assisted negotiation |
+| Lack of transaction visibility | Order tracking |
+| Trust concerns | Ratings and reviews |
+
+---
+
+## 🤝 CONTRIBUTING
+
+Contributions, ideas, bug reports, and feature requests are welcome!
+
+1. Fork the repository.
+2. Create a feature branch.
+
+```bash
+git checkout -b feature/AmazingFeature
+```
+
+3. Commit your changes.
+
+```bash
+git commit -m "Add AmazingFeature"
+```
+
+4. Push your branch.
+
+```bash
+git push origin feature/AmazingFeature
+```
+
+5. Open a Pull Request.
+
+---
+
+## 📄 LICENSE
+
+Distributed under the MIT License. See the `LICENSE` file for details.
+
+---
+
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=rect&color=0:4ADE80,50:166534,100:052E16&height=6" width="100%"/>
+</p>
+
+<h1 align="center">🌾 KISAN BAZAAR</h1>
+
+<h3 align="center">Empowering Farmers. Strengthening Communities.</h3>
+
+<p align="center">
+  <strong>Growing a Smarter Agricultural Future.</strong>
+</p>
+
+<p align="center">
+  Built with ❤️ for farmers, buyers, and a better agricultural ecosystem.
+</p>
+
+<p align="center">
+  <sub>© 2026 Kisan Bazaar • All Rights Reserved</sub>
+</p>
